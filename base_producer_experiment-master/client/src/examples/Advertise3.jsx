@@ -79,11 +79,12 @@ export function Advertisement({ roundNumber, selectedProduct }) {
     }
 
     function handleProductionChoice(e, productionQuality, cost) {
+        const { low, high } = selectedProduct;
         setSelectedQuality(productionQuality);
         setSelectedPrice(cost);
         player.round.set("productionQuality", productionQuality);
-        if (player.round.get("productionQuality") === "low") { player.round.set("productionCost", 5) }
-        if (player.round.get("productionQuality") === "high") { player.round.set("productionCost", 9) }
+        if (player.round.get("productionQuality") === "low") { player.round.set("productionCost", low.price) }
+        if (player.round.get("productionQuality") === "high") { player.round.set("productionCost", high.price) }
         console.log("Saved production quality to player.round object: ", productionQuality);
         console.log("Saved production cost to player.round object: ", player.round.get("productionCost"));
     }
@@ -134,16 +135,6 @@ export function Advertisement({ roundNumber, selectedProduct }) {
 
     return (
         <div className="md:min-w-96 lg:min-w-128 xl:min-w-192 flex flex-col items-center space-y-10">
-            {/* Header */}
-            <div>
-                <h1>
-                    <b>You are the producer of {selectedProduct.name}.</b>{" "}
-                </h1>
-                <h1>
-                    You will now decide what to produce, how to advertise it, and the
-                    price.
-                </h1>
-            </div>
 
             {/* Page Content based on currentPage */}
             {currentPage === 1 && (
@@ -171,7 +162,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
                     selectedProduct={selectedProduct}
                     selectedQuality={selectedQuality}
                     selectedPrice={selectedPrice}
-                    onPriceChoice={onPriceChoice}
+                    onPriceChoice={handlePriceChoice}
                     onWarrantAddition={handleWarrantAddition}
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
@@ -197,8 +188,8 @@ function ProductionAlternative({ title, imageUrl, cost, quality, on_button_click
                 style={{
                     backgroundImage: imageUrl
                 }}
-                alt={title}
             />
+            <img src={imageUrl} alt={title} />
             <div className="flex">
                 <h2>{title}. <br /> {quality} quality
                     {/*cost*/} </h2>
@@ -219,8 +210,9 @@ function AdvertisementAlternative({ title, imageUrl, quality, on_button_click })
                     backgroundImage:
                         imageUrl
                 }}
-                alt={title}
+
             />
+            <img src={imageUrl} alt={title} />
             <div className="flex">
                 <h2>{title}. <br /> </h2>
                 {/*{price} points per unit sold</h2>*/}
@@ -342,10 +334,10 @@ function Part2({
             </div>
 
             {/* Buttons to select advertisement quality and set price */}
-            <div className="flex justify-center space-x-4">
+            {/* <div className="flex justify-center space-x-4">
                 <PriceButton text={'$10'} on_button_click={(e) => onPriceChoice(e, 10)} />
                 <PriceButton text={'$15'} on_button_click={(e) => onPriceChoice(e, 15)} />
-            </div>
+            </div> */}
 
             {/* Continue and Back buttons */}
             <Button handleClick={onPreviousPage}>Back</Button>
@@ -362,7 +354,7 @@ function Part3({
     selectedProduct,
     selectedQuality,
     selectedPrice,
-    onPriceChoice,  
+    onPriceChoice,
     onWarrantAddition,
     onNextPage,
     onPreviousPage,
@@ -370,7 +362,7 @@ function Part3({
     handleSubmit
 }) {
 
-    const { low, high, warrant } = selectedProduct;
+    const { low, high, warrants } = selectedProduct;
 
     return (
         <div>
@@ -389,20 +381,21 @@ function Part3({
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Warrant" children={
                 <>
-                    {Array.isArray(warrant) && warrant.map((warrant, index) => {
-                        return (
-                            <div key={index} className="flex justify-center space-x-4">
+                    {Array.isArray(warrants) && warrants.length > 0 && <div className="flex justify-center space-x-4">
+                        {warrants.map((warrant, index) => {
+                            console.log("warrant", warrant);    
+                            return (
                                 <Button handleClick={(e) => onWarrantSelection(e, warrant.price)}><img src={warrant.icon} alt="icon" /> {warrant.description} ${warrant.price}</Button>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>}
                 </>
             } />
 
             {/* Buttons to set low/high-quality prices */}
             <div className="flex justify-center space-x-4">
-                <PriceButton text={`$${low.price}`} on_button_click={() => onPriceChoice(low.price)} />
-                <PriceButton text={`$${high.price}`} on_button_click={() => onPriceChoice(high.price)} />
+                <PriceButton text={`$${low.price}`} price={low.price} on_button_click={() => onPriceChoice(low.price)} />
+                <PriceButton text={`$${high.price}`} price={high.price} on_button_click={() => onPriceChoice(high.price)} />
             </div>
 
             <ProfitMarginCalculation producerPlayer={player} />

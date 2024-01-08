@@ -51,7 +51,7 @@ export function Introduction({ next }) {
       </div>
       <div className="text-lg mt-1 mb-6">
         <p className="mb-16">
-          In this marketplace, you will have to choose what your priorities are as a producer of toothpaste. You will be shown multiple products.
+          In this marketplace, you will have to choose what your priorities are as a producer of a respective product. You will be shown multiple products.
         </p>
         In <strong>each round of the game</strong>, you will:
         <br />
