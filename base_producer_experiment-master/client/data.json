@@ -1,17 +1,17 @@
 [
     {
-        "name": "colgate",
+        "name": "Colgate",
         "category": "toothpaste",
         "low": {
             "price": 1.99,
             "quantity": 100,
-            "image": "https://res.cloudinary.com/dgccztjql/image/upload/v1704647976/SimPPL/colgate2_n5cf80.png"
+            "image": "https://res.cloudinary.com/dgccztjql/image/upload/v1704647590/SimPPL/colgate1_rlopaq.png"
 
         },
         "high": {
             "price": 2.99,
             "quantity": 100,
-            "image": "https://res.cloudinary.com/dgccztjql/image/upload/v1704647590/SimPPL/colgate1_rlopaq.png"
+            "image": "https://res.cloudinary.com/dgccztjql/image/upload/v1704647976/SimPPL/colgate2_n5cf80.png"
         },
         "warrants": [
             {
@@ -33,7 +33,7 @@
         ]
     },
     {
-        "name": "head and shoulders",
+        "name": "Head and Shoulders",
         "category": "shampoo",
         "low": {
             "price": 1.99,
@@ -65,7 +65,7 @@
         ]
     },
     {
-        "name": "dove",
+        "name": "Dove",
         "category": "soap",
         "low": {
             "price": 1.99,
@@ -97,7 +97,7 @@
         ]
     },
     {
-        "name": "nivea",
+        "name": "Nivea",
         "category": "shower gel",
         "low": {
             "price": 1.99,
@@ -129,7 +129,7 @@
         ]
     },
     {
-        "name": "axe",
+        "name": "Axe",
         "category": "deodorant",
         "low": {
             "price": 1.99,
@@ -161,7 +161,7 @@
         ]
     },
     {
-        "name": "gillette",
+        "name": "Gillette",
         "category": "shaving cream",
         "low": {
             "price": 1.99,
@@ -193,7 +193,7 @@
         ]
     },
     {
-        "name": "dettol",
+        "name": "Dettol",
         "category": "hand sanitizer",
         "low": {
             "price": 1.99,
@@ -225,7 +225,7 @@
         ]
     },
     {
-        "name": "vaseline",
+        "name": "Vaseline",
         "category": "lotion",
         "low": {
             "price": 1.99,

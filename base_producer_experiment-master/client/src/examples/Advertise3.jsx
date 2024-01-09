@@ -7,6 +7,7 @@ import {
 import React, { useState } from "react";
 import { Avatar } from "../components/Avatar";
 import { Button } from "../components/Button";
+import { Button3 } from "../components/Button3";
 import { Modal } from "../components/Modal";
 import "@empirica/core/player/classic/react";
 
@@ -182,21 +183,19 @@ function NextRoundButton({ on_button_click }) {
 
 function ProductionAlternative({ title, imageUrl, cost, quality, on_button_click }) {
     return (
-        <div className="h-50 w-50 pb-6">
-            <div
-                className="h-full w-full bg-contain bg-center bg-no-repeat"
-                style={{
-                    backgroundImage: imageUrl
-                }}
+        <div className="p-4 h-75 w-75">
+            <img src={imageUrl} 
+            alt={title}
+            style={{ filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3))' }}
+            className="mb-4"
             />
-            <img src={imageUrl} alt={title} />
-            <div className="flex">
-                <h2>{title}. <br /> {quality} quality
-                    {/*cost*/} </h2>
-            </div>
-            <Button handleClick={on_button_click} adQuality={quality} primary>
+            <h1 className="flex justify-center font-bold">{title}</h1>
+            <h2 className="flex justify-center bg-indigo-800 text-white rounded-lg pl-2 pr-2 pt-1 pb-1"><em>{quality} quality</em></h2>
+                    {/*cost*/} 
+            <div className="pt-2"><Button handleClick={on_button_click} adQuality={quality} primary>
                 💸 Produce this quality at a cost of ${cost} per unit
-            </Button>
+            </Button></div>
+            
         </div>
     );
 }
@@ -204,14 +203,6 @@ function ProductionAlternative({ title, imageUrl, cost, quality, on_button_click
 function AdvertisementAlternative({ title, imageUrl, quality, on_button_click }) {
     return (
         <div className="h-50 w-50 pb-6">
-            <div
-                className="h-full w-full bg-contain bg-center bg-no-repeat"
-                style={{
-                    backgroundImage:
-                        imageUrl
-                }}
-
-            />
             <img src={imageUrl} alt={title} />
             <div className="flex">
                 <h2>{title}. <br /> </h2>
@@ -273,14 +264,17 @@ function Part1({ selectedProduct, onProductionChoice, onNextPage }) {
     const { low, high } = selectedProduct;
 
     return (
-        <div>
-            <h1>
-                <b>You are the producer of {selectedProduct.name}.</b>{" "}
-            </h1>
-            <h1>You will now decide what to produce, how to advertise it, and the price.</h1>
+        <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative">
+            
+                <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
+                    You are the producer of <b>{selectedProduct.name}</b>{" "}
+                </h1>
+            
+            
+            <h1 className="flex justify-center mb-4">You will now decide what to produce, how to advertise it, and the price.</h1>
 
             {/* Display product images and corresponding prices */}
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 h-full">
                 <ProductionAlternative
                     title={`Standard ${selectedProduct.name}`}
                     cost={low.price}
@@ -298,7 +292,9 @@ function Part1({ selectedProduct, onProductionChoice, onNextPage }) {
             </div>
 
             {/* Continue button to move to the next page */}
-            <Button handleClick={onNextPage} className="mt-32">Continue</Button>
+            <div className="flex justify-center mt-40">
+                <Button3 handleClick={onNextPage}>Continue</Button3>
+            </div>
         </div>
     );
 }
@@ -314,7 +310,7 @@ function Part2({
 }) {
     const { low, high } = selectedProduct;
     return (
-        <div>
+        <div className="flex flex-col justify-center border-4 p-4 text-center">
             <h1>
                 <b>Choose how you want to advertise.</b>
             </h1>
@@ -340,8 +336,10 @@ function Part2({
             </div> */}
 
             {/* Continue and Back buttons */}
-            <Button handleClick={onPreviousPage}>Back</Button>
-            <Button handleClick={onNextPage}>Continue</Button>
+            <div className="flex justify-between mt-32 items-center">
+                <Button handleClick={onPreviousPage}>Back</Button>
+                <Button handleClick={onNextPage}>Continue</Button>
+            </div>
         </div>
     );
 }

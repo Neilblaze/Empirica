@@ -7,6 +7,7 @@ import { Loading } from "@empirica/core/player/react";
 import React, { useState } from "react";
 import { Advertisement } from "./examples/Advertise3";
 import { SalesResults } from "./examples/Results";
+import { Profile } from "./Profile";
 import products from "../data.json";
 
 export function Stage() {
@@ -53,7 +54,16 @@ export function Stage() {
       case "advertise2":
       case "advertise3":
       case "advertise4":
-        return <Advertisement roundNumber={roundNumber} selectedProduct={randomProduct} />;
+        return (
+          <div className="pt-2 flex flex-col justify-center">
+            <div className="h-full w-full md:w-[80vw] md:h-[80vh] flex flex-col">
+              <Profile productName={randomProduct.name} />
+            </div>
+            <div className="mt-32">
+              <Advertisement roundNumber={roundNumber} selectedProduct={randomProduct} />
+            </div>
+          </div>
+        );
       case "results":
       case "results2":
       case "results3":
