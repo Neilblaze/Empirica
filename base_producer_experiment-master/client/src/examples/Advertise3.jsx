@@ -21,7 +21,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
     const [selectedQuality, setSelectedQuality] = useState("");
     const [selectedPrice, setSelectedPrice] = useState(0);
 
-    const [selectedWarrant, setSelectedWarrant] = useState(null);
+    const [selectedWarrants, setSelectedWarrants] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // const handleProductionChoice = (quality, cost) => {
@@ -43,13 +43,14 @@ export function Advertisement({ roundNumber, selectedProduct }) {
 
     const handleWarrantAddition = () => {
         setIsModalOpen(true);
-        console.log("warrant added");
+        console.log("warrant opened");
     };
 
-    const handleWarrantSelection = (warrantPrice) => {
-        setSelectedPrice(warrantPrice);
-        setIsModalOpen(false);
-    };
+    // const handleWarrantSelection = (warrantPrice) => {
+    //     setSelectedPrice(warrantPrice);
+    //     console.log("warrant added with price: ", warrantPrice);
+    //     // setIsModalOpen(false);
+    // };
 
     const handleNextPage = () => {
         setCurrentPage(currentPage + 1);
@@ -74,10 +75,69 @@ export function Advertisement({ roundNumber, selectedProduct }) {
             [player.round.get("productionQuality"),
             player.round.get("advertisementQuality"),
             player.round.get("priceOfProduct"),
-            player.round.get("productionCost")])
+            player.round.get("productionCost"),
+            player.round.get("imageURL"),
+            player.round.get("warrants")])
 
         player.stage.set("submit", true);//player.stage.submit();
     }
+
+    const onWarrantSelection = (e, price, description) => {
+        if (selectedWarrants.includes(price)) {
+            onWarrantDeselection(e, price, description);
+        } else {
+            setSelectedWarrants((prevSelected) => [...prevSelected, price]);
+            handleWarrantSelection(e, price);
+            handleWarrantUpdate(e, description, price);
+        }
+    };
+
+    const onWarrantDeselection = (e, price, description) => {
+        setSelectedWarrants((prevSelected) =>
+            prevSelected.filter((selectedPrice) => selectedPrice !== price)
+        );
+        handleWarrantDeselection(e, price);
+        handleWarrantDeupdate(e, description, price);
+    };
+
+    const handleWarrantUpdate = (e, warrantDesc, warrantPrice) => {
+        const warrantarr = player.round.get("warrants") || [];
+        warrantarr.push({ warrantDesc, warrantPrice });
+        player.round.set("warrants", warrantarr);
+    };
+
+    const handleWarrantSelection = (e, warrantCost) => {
+        let sum = parseFloat(
+            parseFloat(player.round.get("priceOfProduct")) + parseFloat(warrantCost)
+        );
+        player.round.set("priceOfProduct", sum);
+        console.log("Saved warranted priceOfProduct to player.round object: ", sum);
+    };
+
+    const handleWarrantDeselection = (e, warrantCost) => {
+        let diff = parseFloat(
+            parseFloat(player.round.get("priceOfProduct")) - parseFloat(warrantCost)
+        );
+        player.round.set("priceOfProduct", diff);
+        console.log("Updated priceOfProduct after warrant deselection: ", diff);
+    };
+
+    const handleWarrantDeupdate = (e, warrantDesc, warrantPrice) => {
+        const warrantarr = player.round.get("warrants") || [];
+        const updatedWarrants = warrantarr.filter(
+            (warrant) =>
+                warrant.warrantDesc !== warrantDesc || warrant.warrantPrice !== warrantPrice
+        );
+        player.round.set("warrants", updatedWarrants);
+    };
+
+
+    // function handleWarrantUpdate(e, warrantDesc, warrantPrice) {
+    //     const warrantarr = player.round.get("warrants") || []
+    //     warrantarr.push({warrantDesc, warrantPrice})
+    //     player.round.set("warrants", warrantarr)
+    // }
+
 
     function handleProductionChoice(e, productionQuality, cost) {
         const { low, high } = selectedProduct;
@@ -90,6 +150,11 @@ export function Advertisement({ roundNumber, selectedProduct }) {
         console.log("Saved production cost to player.round object: ", player.round.get("productionCost"));
     }
 
+    function handleImageURL(e, imgURL){
+        player.round.set("imageURL", imgURL);
+        console.log("Image URL is set for ", player.round.get("productionQuality"))
+    }
+
     function handleAdvertisementChoice(e, advertisementQuality) {
         player.round.set("advertisementQuality", advertisementQuality);
         console.log("Saved advertisement quality to player.round object: ", advertisementQuality);
@@ -99,6 +164,17 @@ export function Advertisement({ roundNumber, selectedProduct }) {
         player.round.set("priceOfProduct", priceOfProduct);
         console.log("Saved priceOfProduct to player.round object: ", priceOfProduct);
     }
+
+    // function handleWarrantSelection(e, warrantCost){
+
+    //     console.log("returned Price Product: ",player.round.get("priceOfProduct"))
+    //     console.log("warrant price returned: ",warrantCost)
+    //     let sum = parseFloat(parseFloat(player.round.get("priceOfProduct")) + parseFloat(warrantCost))
+    //     console.log("Sum: ",sum)
+    //     player.round.set("priceOfProduct", sum);
+        
+    //     console.log("Saved warranted priceOfProduct to player.round object: ", sum);
+    // }
 
     let product = {};
 
@@ -142,6 +218,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
                 <Part1
                     selectedProduct={selectedProduct}
                     onProductionChoice={handleProductionChoice}
+                    onImageChoice={handleImageURL}
                     onNextPage={handleNextPage}
                 />
             )}
@@ -167,8 +244,9 @@ export function Advertisement({ roundNumber, selectedProduct }) {
                     onWarrantAddition={handleWarrantAddition}
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
-                    onWarrantSelection={handleWarrantSelection}
+                    onWarrantSelection={onWarrantSelection}
                     handleSubmit={handleSubmit}
+                    onWarrantUpdate={handleWarrantUpdate}
                 />
             )}
         </div>
@@ -182,35 +260,52 @@ function NextRoundButton({ on_button_click }) {
 }
 
 function ProductionAlternative({ title, imageUrl, cost, quality, on_button_click }) {
+    const qualityClass = quality === "low" ? "bg-orange-500" : "bg-green-500";
     return (
         <div className="p-4 h-75 w-75">
-            <img src={imageUrl} 
-            alt={title}
-            style={{ filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3))' }}
-            className="mb-4"
+            <img
+                src={imageUrl}
+                alt={title}
+                style={{ filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3))' }}
+                className="mb-4"
             />
             <h1 className="flex justify-center font-bold">{title}</h1>
-            <h2 className="flex justify-center bg-indigo-800 text-white rounded-lg pl-2 pr-2 pt-1 pb-1"><em>{quality} quality</em></h2>
-                    {/*cost*/} 
-            <div className="pt-2"><Button handleClick={on_button_click} adQuality={quality} primary>
-                💸 Produce this quality at a cost of ${cost} per unit
-            </Button></div>
-            
+            <h2 className={`flex justify-center text-white rounded-lg pl-2 pr-2 pt-1 pb-1 ${qualityClass}`}>
+                <em>{quality} quality</em>
+            </h2>
+            {/*cost*/}
+            <div className="pt-2">
+                <Button handleClick={on_button_click} adQuality={quality} primary>
+                    💸 Produce this quality at a cost of ${cost} per unit
+                </Button>
+            </div>
         </div>
     );
 }
 
 function AdvertisementAlternative({ title, imageUrl, quality, on_button_click }) {
+    const qualityClass = quality === "low" ? "bg-orange-500" : "bg-teal-500";
     return (
-        <div className="h-50 w-50 pb-6">
-            <img src={imageUrl} alt={title} />
-            <div className="flex">
-                <h2>{title}. <br /> </h2>
+        <div className="h-75 w-64 pb-6 mt-6">
+            <img
+                src={imageUrl}
+                alt={title}
+                style={{ filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3))' }}
+                className="mb-4"
+            />
+            <br/>
+            <div className="flex justify-center">
+                <h2 className={`flex justify-center text-white rounded-lg pl-2 pr-2 pt-1 pb-1 ${qualityClass}`}>
+                    <b><em>{title}</em></b>
+                </h2>
+                {/* <h2 className="flex justify-center font-bold"></h2> */}
                 {/*{price} points per unit sold</h2>*/}
             </div>
-            <Button handleClick={on_button_click} adQuality={quality} primary>
-                📣 Advertise as {quality} quality
-            </Button>
+            <div className="pt-2 flex justify-center">
+                <Button handleClick={on_button_click} adQuality={quality} primary>
+                    📣 Advertise as {quality} quality
+                </Button>
+            </div>
         </div>
     );
 }
@@ -218,7 +313,7 @@ function AdvertisementAlternative({ title, imageUrl, quality, on_button_click })
 function PriceButton({ text, price, on_button_click }) {
     return (
         <Button handleClick={on_button_click} >
-            🏷️ Sell my product for {text} {price}
+            🏷️ Sell my product for {text}
         </Button>
     )
 }
@@ -251,8 +346,8 @@ function ProfitMarginCalculation({ producerPlayer }) {
     let profit = producerPlayer.round.get("priceOfProduct") - producerPlayer.round.get("productionCost")
     return (
         <div>
-
-            <p>You have chosen to produce <b>{producerPlayer.round.get("productionQuality")}</b> quality toothpaste and advertise it as <b>{producerPlayer.round.get("advertisementQuality")}</b> quality toothpase at a <b>price of ${producerPlayer.round.get("priceOfProduct")}</b>.</p>
+            <p>Your current choice is to sell at a price of: <b>$ {producerPlayer.round.get("priceOfProduct")} </b></p>
+            <p>You have chosen to produce <b>{producerPlayer.round.get("productionQuality")}</b> quality product and advertise it as <b>{producerPlayer.round.get("advertisementQuality")}</b> quality product at a <b>price of ${producerPlayer.round.get("productionCost")}</b>.</p>
             <h1><p>This gives a <b>profit of  ${profit}</b> per product sold.</p></h1>
 
         </div>
@@ -260,7 +355,7 @@ function ProfitMarginCalculation({ producerPlayer }) {
 }
 
 // Part 1 Component
-function Part1({ selectedProduct, onProductionChoice, onNextPage }) {
+function Part1({ selectedProduct, onProductionChoice, onImageChoice, onNextPage }) {
     const { low, high } = selectedProduct;
 
     return (
@@ -280,20 +375,23 @@ function Part1({ selectedProduct, onProductionChoice, onNextPage }) {
                     cost={low.price}
                     quality="low"
                     imageUrl={low.image}
-                    on_button_click={(e) => onProductionChoice(e, "low")}
+                    on_button_click={(e) => {onProductionChoice(e, "low", `${low.price}`) ; onImageChoice(e, `${low.image}`)}}
                 />
                 <ProductionAlternative
                     title={`Amazing ${selectedProduct.name}`}
                     cost={high.price}
                     quality="high"
                     imageUrl={high.image}
-                    on_button_click={(e) => onProductionChoice(e, "high")}
+                    on_button_click={(e) => {onProductionChoice(e, "high", `${high.price}`) ; onImageChoice(e, `${high.image}`)}}
                 />
             </div>
 
             {/* Continue button to move to the next page */}
             <div className="flex justify-center mt-40">
                 <Button3 handleClick={onNextPage}>Continue</Button3>
+            </div>
+            <div className="flex justify-center mt-6">
+                <h1>💡 <b>NOTE:</b> If no option is chosen, the value is treated as undefined by default.</h1>
             </div>
         </div>
     );
@@ -310,11 +408,11 @@ function Part2({
 }) {
     const { low, high } = selectedProduct;
     return (
-        <div className="flex flex-col justify-center border-4 p-4 text-center">
-            <h1>
-                <b>Choose how you want to advertise.</b>
+        <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10">
+            <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
+                <b>Choose how you want to Advertise</b>{" "}
             </h1>
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center space-x-4 h-full">
                 <AdvertisementAlternative
                     title={`Standard ${selectedQuality} quality`}
                     quality="low"
@@ -324,7 +422,7 @@ function Part2({
                 <AdvertisementAlternative
                     title={`Amazing ${selectedQuality} quality`}
                     quality="high"
-                    imageUrl={high.image}  // Add appropriate image URL
+                    imageUrl={high.image}
                     on_button_click={(e) => onAdvertisementChoice(e, "high")}
                 />
             </div>
@@ -337,8 +435,11 @@ function Part2({
 
             {/* Continue and Back buttons */}
             <div className="flex justify-between mt-32 items-center">
-                <Button handleClick={onPreviousPage}>Back</Button>
-                <Button handleClick={onNextPage}>Continue</Button>
+                <Button3 handleClick={onPreviousPage} primary>← &nbsp; Back</Button3>
+                <Button3 handleClick={onNextPage}>Continue &nbsp; →</Button3>
+            </div>
+            <div className="flex justify-center mt-8">
+                <h1>💡 <b>NOTE:</b> If no option is chosen, the value is treated as undefined by default.</h1>
             </div>
         </div>
     );
@@ -357,6 +458,7 @@ function Part3({
     onNextPage,
     onPreviousPage,
     onWarrantSelection,
+    onWarrantUpdate,
     handleSubmit
 }) {
 
@@ -371,33 +473,55 @@ function Part3({
             {/* Display product prices and add warrant button */}
             <div className="flex justify-center space-x-4">
                 <div>
-                    <p>A typical price for <b>low</b> quality {selectedQuality} is : ${low['price']}</p>
-                    <p>A typical price for <b>high</b> quality {selectedQuality} is : ${high['price']}</p>
+                    <p>A typical price for <b>low</b> quality is : ${low['price']}</p>
+                    <p>A typical price for <b>high</b> quality is : ${high['price']}</p>
                 </div>
                 <Button handleClick={onWarrantAddition}>Add a warrant</Button>
             </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Warrant" children={
                 <>
-                    {Array.isArray(warrants) && warrants.length > 0 && <div className="flex justify-center space-x-4">
-                        {warrants.map((warrant, index) => {
-                            console.log("warrant", warrant);    
-                            return (
-                                <Button handleClick={(e) => onWarrantSelection(e, warrant.price)}><img src={warrant.icon} alt="icon" /> {warrant.description} ${warrant.price}</Button>
-                            )
-                        })}
-                    </div>}
+                    {Array.isArray(warrants) && warrants.length > 0 && (
+                        <div className="flex justify-center space-x-4">
+                            {warrants.map((warrant, index) => {
+                                return (
+                                    <div
+                                        className="flex flex-col"
+                                        key={index}
+                                        onClick={(e) => {
+                                            onWarrantSelection(e, warrant.price, warrant.description);
+                                        }}
+                                    >
+                                        <img src={warrant.icon} alt="icon" />
+                                        <h1 className="font-bold">{warrant.description} </h1>
+                                        <h1 className="font-semibold">${warrant.price}</h1>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </>
             } />
 
             {/* Buttons to set low/high-quality prices */}
             <div className="flex justify-center space-x-4">
-                <PriceButton text={`$${low.price}`} price={low.price} on_button_click={() => onPriceChoice(low.price)} />
-                <PriceButton text={`$${high.price}`} price={high.price} on_button_click={() => onPriceChoice(high.price)} />
+            <PriceButton text={`$${low.price}`} price={low.price} on_button_click={(e) => {onPriceChoice(e, `${low.price}`) ; player.round.set("warrants", [])}} />
+                <PriceButton text={`$${high.price}`} price={high.price} on_button_click={(e) => {onPriceChoice(e, `${high.price}`) ; player.round.set("warrants", [])}} />
             </div>
 
             <ProfitMarginCalculation producerPlayer={player} />
+            <div>
+                <h1>Warrants chosen: </h1>
+                <ul>
+                    {player.round.get("warrants") && player.round.get("warrants").map((warrant,index) => (
+                        <li key={index}>
+                        {`Description: ${warrant.warrantDesc}, Price: ${warrant.warrantPrice}`}
 
+                        </li>
+                    ))}
+                </ul>
+            
+            </div>
             {/* Continue and Back buttons */}
             <Button handleClick={onPreviousPage}>Back</Button>
             {/* <Button handleClick={(e) => handleSubmit(e)}>Continue</Button> */}

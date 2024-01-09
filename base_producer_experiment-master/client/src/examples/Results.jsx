@@ -24,13 +24,15 @@ export function SalesResults({roundNumber}) {
   const advertisementQuality = player.get(roundNumberText.concat("_choices"))[1]
   const priceOfProduct = player.get(roundNumberText.concat("_choices"))[2]
   const productionCost = player.get(roundNumberText.concat("_choices"))[3]
-  let imageUrl = "";
-  //console.log('roundNumberText', roundNumberText)
-  if (advertisementQuality === "high") {
-    imageUrl = "/images/toothpaseamazing.jpg"; // Replace with the actual URL for high quality
-  } else if (advertisementQuality === "low") {
-    imageUrl = "/images/toothpastestandard.jpg"; // Replace with the actual URL for low quality
-  }
+  const imageURL = player.get(roundNumberText.concat("_choices"))[4]
+  const warrants = player.get(roundNumberText.concat("_choices"))[5]
+  // let imageUrl = "";
+  // //console.log('roundNumberText', roundNumberText)
+  // if (advertisementQuality === "high") {
+  //   imageUrl = "/images/toothpaseamazing.jpg"; // Replace with the actual URL for high quality
+  // } else if (advertisementQuality === "low") {
+  //   imageUrl = "/images/toothpastestandard.jpg"; // Replace with the actual URL for low quality
+  // }
 
   const currentScore = player.get("score") || 0; // , adQuality, points, salesCount, numBuyers
   
@@ -73,9 +75,18 @@ export function SalesResults({roundNumber}) {
           You chose to advertise it as a <b>{advertisementQuality}</b> quality product.
         You sold it at a price of <b>${priceOfProduct}</b>.
         <br /> <br />
+        <h1>Warrants chosen: </h1>
+                <ul>
+                    {warrants && warrants.map((warrant,index) => (
+                        <li key={index}>
+                        {`Description: ${warrant.warrantDesc}, Price: ${warrant.warrantPrice}`}
+
+                        </li>
+                    ))}
+                </ul>
         </p>
 
-        <img src={imageUrl} alt="Toothpaste Standard" width="250" height="250"/>
+        <img src={imageURL} alt="Toothpaste Standard" width="250" height="250"/>
 
         
         <p>

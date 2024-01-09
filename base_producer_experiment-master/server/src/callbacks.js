@@ -7,7 +7,7 @@ Empirica.onGameStart(({ game }) => {
     name: "Advertise",
     task: "advertise",
   });
-  round0.addStage({ name: "advertiseProduct", duration: 840 });
+  round0.addStage({ name: "advertiseProduct", duration: 1840 });
 
   const round1 = game.addRound({
     name: "Results",
