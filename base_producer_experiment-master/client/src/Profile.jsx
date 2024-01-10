@@ -32,7 +32,7 @@ export function Profile({ productName }) {
             Score
           </div>
           <div className="text-3xl font-semibold !leading-none tabular-nums">
-            {score}
+            {Math.floor(score)}
           </div>
         </div>
         <div className="h-11 w-11">

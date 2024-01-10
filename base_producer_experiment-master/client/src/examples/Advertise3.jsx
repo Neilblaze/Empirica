@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { Avatar } from "../components/Avatar";
 import { Button } from "../components/Button";
 import { Button3 } from "../components/Button3";
+import { Button4 } from "../components/Button4";
 import { Modal } from "../components/Modal";
 import "@empirica/core/player/classic/react";
 
@@ -150,7 +151,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
         console.log("Saved production cost to player.round object: ", player.round.get("productionCost"));
     }
 
-    function handleImageURL(e, imgURL){
+    function handleImageURL(e, imgURL) {
         player.round.set("imageURL", imgURL);
         console.log("Image URL is set for ", player.round.get("productionQuality"))
     }
@@ -172,7 +173,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
     //     let sum = parseFloat(parseFloat(player.round.get("priceOfProduct")) + parseFloat(warrantCost))
     //     console.log("Sum: ",sum)
     //     player.round.set("priceOfProduct", sum);
-        
+
     //     console.log("Saved warranted priceOfProduct to player.round object: ", sum);
     // }
 
@@ -220,6 +221,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
                     onProductionChoice={handleProductionChoice}
                     onImageChoice={handleImageURL}
                     onNextPage={handleNextPage}
+                    player={player}
                 />
             )}
             {currentPage === 2 && (
@@ -230,6 +232,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
                     onPriceChoice={handlePriceChoice}
                     onNextPage={handleNextPage}
                     onPreviousPage={handlePreviousPage}
+                    player={player}
                 />
             )}
             {currentPage === 3 && (
@@ -255,7 +258,7 @@ export function Advertisement({ roundNumber, selectedProduct }) {
 
 function NextRoundButton({ on_button_click }) {
     return (
-        <Button handleClick={on_button_click}> Go to market (next round) </Button>
+        <Button3 handleClick={on_button_click}> Go to market (next round) &nbsp; →</Button3>
     )
 }
 
@@ -293,7 +296,7 @@ function AdvertisementAlternative({ title, imageUrl, quality, on_button_click })
                 style={{ filter: 'drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.3))' }}
                 className="mb-4"
             />
-            <br/>
+            <br />
             <div className="flex justify-center">
                 <h2 className={`flex justify-center text-white rounded-lg pl-2 pr-2 pt-1 pb-1 ${qualityClass}`}>
                     <b><em>{title}</em></b>
@@ -345,27 +348,27 @@ function PlayerScore(player, onChange, isResultStage) {
 function ProfitMarginCalculation({ producerPlayer }) {
     let profit = producerPlayer.round.get("priceOfProduct") - producerPlayer.round.get("productionCost")
     return (
-        <div>
-            <p>Your current choice is to sell at a price of: <b>$ {producerPlayer.round.get("priceOfProduct")} </b></p>
-            <p>You have chosen to produce <b>{producerPlayer.round.get("productionQuality")}</b> quality product and advertise it as <b>{producerPlayer.round.get("advertisementQuality")}</b> quality product at a <b>price of ${producerPlayer.round.get("productionCost")}</b>.</p>
-            <h1><p>This gives a <b>profit of  ${profit}</b> per product sold.</p></h1>
+        <div className="mt-8">
+            <p className="mb-4">✅ Your current choice is to sell at a price of: <b>$ {producerPlayer.round.get("priceOfProduct")} </b></p>
+            <p className="mb-4">ℹ️ You have chosen to produce <b>{producerPlayer.round.get("productionQuality")}</b> quality product and advertise it as <b>{producerPlayer.round.get("advertisementQuality")}</b> quality product at a <b>price of ${producerPlayer.round.get("productionCost")}</b>.</p>
+            <p className="mb-4">📈 This gives a <b>profit of  ${profit}</b> per product sold.</p>
 
         </div>
     )
 }
 
 // Part 1 Component
-function Part1({ selectedProduct, onProductionChoice, onImageChoice, onNextPage }) {
+function Part1({ selectedProduct, onProductionChoice, onImageChoice, onNextPage, player }) {
     const { low, high } = selectedProduct;
 
     return (
         <div className="flex flex-col -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative">
-            
-                <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
-                    You are the producer of <b>{selectedProduct.name}</b>{" "}
-                </h1>
-            
-            
+
+            <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
+                You are the producer of <b>{selectedProduct.name}</b>{" "}
+            </h1>
+
+
             <h1 className="flex justify-center mb-4">You will now decide what to produce, how to advertise it, and the price.</h1>
 
             {/* Display product images and corresponding prices */}
@@ -375,20 +378,20 @@ function Part1({ selectedProduct, onProductionChoice, onImageChoice, onNextPage 
                     cost={low.price}
                     quality="low"
                     imageUrl={low.image}
-                    on_button_click={(e) => {onProductionChoice(e, "low", `${low.price}`) ; onImageChoice(e, `${low.image}`)}}
+                    on_button_click={(e) => { onProductionChoice(e, "low", `${low.price}`); onImageChoice(e, `${low.image}`) }}
                 />
                 <ProductionAlternative
                     title={`Amazing ${selectedProduct.name}`}
                     cost={high.price}
                     quality="high"
                     imageUrl={high.image}
-                    on_button_click={(e) => {onProductionChoice(e, "high", `${high.price}`) ; onImageChoice(e, `${high.image}`)}}
+                    on_button_click={(e) => { onProductionChoice(e, "high", `${high.price}`); onImageChoice(e, `${high.image}`) }}
                 />
             </div>
 
             {/* Continue button to move to the next page */}
             <div className="flex justify-center mt-40">
-                <Button3 handleClick={onNextPage}>Continue</Button3>
+                <Button3 disabled={!player.round.get("productionQuality")} handleClick={onNextPage}>Continue &nbsp; →</Button3>
             </div>
             <div className="flex justify-center mt-6">
                 <h1>💡 <b>NOTE:</b> If no option is chosen, the value is treated as undefined by default.</h1>
@@ -465,18 +468,17 @@ function Part3({
     const { low, high, warrants } = selectedProduct;
 
     return (
-        <div>
-            <h1>
+        <div className="flex flex-col gap-2 -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10">
+            <h1 className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-200 border-2 border-teal-600 pl-2 pr-2 rounded-lg text-lg mb-4" style={{ fontFamily: "'Archivo', sans-serif", whiteSpace: 'nowrap', textAlign: 'center' }}>
                 <b>Choose your product price.</b>
             </h1>
 
             {/* Display product prices and add warrant button */}
-            <div className="flex justify-center space-x-4">
+            <div className="flex justify-center mt-6 mb-6 space-x-4 h-full">
                 <div>
-                    <p>A typical price for <b>low</b> quality is : ${low['price']}</p>
-                    <p>A typical price for <b>high</b> quality is : ${high['price']}</p>
+                    <p className="mb-2">A typical price for <b>low</b> quality is: ${low['price']}</p>
+                    <p className="mb-2">A typical price for <b>high</b> quality is: ${high['price']}</p>
                 </div>
-                <Button handleClick={onWarrantAddition}>Add a warrant</Button>
             </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Warrant" children={
@@ -486,14 +488,14 @@ function Part3({
                             {warrants.map((warrant, index) => {
                                 return (
                                     <div
-                                        className="flex flex-col"
+                                        className="flex flex-col items-center cursor-pointer select:border-2 border-black"
                                         key={index}
                                         onClick={(e) => {
                                             onWarrantSelection(e, warrant.price, warrant.description);
                                         }}
                                     >
-                                        <img src={warrant.icon} alt="icon" />
-                                        <h1 className="font-bold">{warrant.description} </h1>
+                                        <img src={warrant.icon} alt="icon" className="mb-2" />
+                                        <h1 className="font-bold">{warrant.description}</h1>
                                         <h1 className="font-semibold">${warrant.price}</h1>
                                     </div>
                                 );
@@ -504,29 +506,30 @@ function Part3({
             } />
 
             {/* Buttons to set low/high-quality prices */}
-            <div className="flex justify-center space-x-4">
-            <PriceButton text={`$${low.price}`} price={low.price} on_button_click={(e) => {onPriceChoice(e, `${low.price}`) ; player.round.set("warrants", [])}} />
-                <PriceButton text={`$${high.price}`} price={high.price} on_button_click={(e) => {onPriceChoice(e, `${high.price}`) ; player.round.set("warrants", [])}} />
+            <div className="flex justify-center space-x-8">
+                <PriceButton text={`$${low.price}`} price={low.price} on_button_click={(e) => { onPriceChoice(e, `${low.price}`); player.round.set("warrants", []) }} /> 
+                <PriceButton text={`$${high.price}`} price={high.price} on_button_click={(e) => { onPriceChoice(e, `${high.price}`); player.round.set("warrants", []) }} />
             </div>
+
+            <Button4 className="w-fit p-4 mt-6 mx-auto" handleClick={onWarrantAddition}>Add a warrant</Button4>
 
             <ProfitMarginCalculation producerPlayer={player} />
-            <div>
-                <h1>Warrants chosen: </h1>
-                <ul>
-                    {player.round.get("warrants") && player.round.get("warrants").map((warrant,index) => (
+            <div className="mt-4">
+                <h1 className="mb-2 text-xl font-bold">{player.round.get("warrants") ? "▼ ㅤ Warrants chosen:" : "➤ No Warrants chosen."}</h1>
+                <ol>
+                    {player.round.get("warrants") && player.round.get("warrants").map((warrant, index) => (
                         <li key={index}>
-                        {`Description: ${warrant.warrantDesc}, Price: ${warrant.warrantPrice}`}
-
+                            {`• Description: ${warrant.warrantDesc}, Price: ${warrant.warrantPrice}`}
                         </li>
                     ))}
-                </ul>
-            
+                </ol>
             </div>
-            {/* Continue and Back buttons */}
-            <Button handleClick={onPreviousPage}>Back</Button>
-            {/* <Button handleClick={(e) => handleSubmit(e)}>Continue</Button> */}
-            <NextRoundButton on_button_click={(e) => handleSubmit(e)} />
+            <div className="flex justify-between mt-10 items-center">
+                {/* Continue and Back buttons */}
+                <Button3 handleClick={onPreviousPage} primary>← &nbsp; Back</Button3>
+                {/* <Button handleClick={(e) => handleSubmit(e)}>Continue</Button> */}
+                <NextRoundButton on_button_click={(e) => handleSubmit(e)} />
+            </div>
         </div>
     );
 }
-
