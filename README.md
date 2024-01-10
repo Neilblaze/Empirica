@@ -1,5 +1,12 @@
 # Warrants Feature for Producers in the Marketplace 🛒
 
+https://github.com/Neilblaze/Empirica/assets/48355572/6d914a14-8ed3-4f87-873f-9a3d195e3bba
+
+<br/>
+
+![dotted-bar-long](https://user-images.githubusercontent.com/48355572/263612162-32246a50-238b-48d7-aa6d-f1562b04ce3a.png)
+
+
 ## ⏺️ Planning the Feature
 
 In developing the warrants feature, we approached the initial planning phase as a collaborative effort among the three of us (Myself, i.e. [Pratyay](https://github.com/neilblaze), [Veer](https://github.com/VP45) & [Archit](https://github.com/Archit1706)). We discussed the feature's requirements initially, identifying the key aspects that needed attention, considering both the user experience as well as the technical implementation.
