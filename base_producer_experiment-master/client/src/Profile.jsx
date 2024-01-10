@@ -13,9 +13,7 @@ export function Profile({ productName }) {
   const stage = useStage();
 
   const score = player.get("score") || 0;
-
   const roundName = round?.get("name") || "";
-  // const stageName = stage?.get("name") || "";
 
   return (
     <div className="min-w-lg md:min-w-2xl mt-2 mx-auto px-3 py-2 text-gray-500 rounded-md grid grid-cols-3 items-center border-.5 border-purple-500">

@@ -5,7 +5,7 @@ import {
 } from "@empirica/core/player/classic/react";
 import { Loading } from "@empirica/core/player/react";
 import React, { useState } from "react";
-import { Advertisement } from "./examples/Advertise3";
+import { Advertisement } from "./examples/Advertise";
 import { SalesResults } from "./examples/Results";
 import { Profile } from "./Profile";
 import products from "../data.json";
