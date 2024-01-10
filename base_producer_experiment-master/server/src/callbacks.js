@@ -13,13 +13,13 @@ Empirica.onGameStart(({ game }) => {
     name: "Results",
     task: "results",
   });
-  round1.addStage({ name: "Result", duration: 140 });
+  round1.addStage({ name: "Result", duration: 280 });
 
   const round2 = game.addRound({
     name: "Advertise",
     task: "advertise2",
   });
-  round2.addStage({ name: "advertiseProduct", duration: 240 });
+  round2.addStage({ name: "advertiseProduct", duration: 1840 });
   
   const round3 = game.addRound({
     name: "Results",

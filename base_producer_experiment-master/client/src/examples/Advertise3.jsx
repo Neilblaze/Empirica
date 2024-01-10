@@ -351,7 +351,7 @@ function ProfitMarginCalculation({ producerPlayer }) {
         <div className="mt-8">
             <p className="mb-4">✅ Your current choice is to sell at a price of: <b>$ {producerPlayer.round.get("priceOfProduct")} </b></p>
             <p className="mb-4">ℹ️ You have chosen to produce <b>{producerPlayer.round.get("productionQuality")}</b> quality product and advertise it as <b>{producerPlayer.round.get("advertisementQuality")}</b> quality product at a <b>price of ${producerPlayer.round.get("productionCost")}</b>.</p>
-            <p className="mb-4">📈 This gives a <b>profit of  ${profit}</b> per product sold.</p>
+            <p className="mb-4">📈 This gives a <b>profit of  ${Math.ceil(profit.toFixed(2))}</b> per product sold.</p>
 
         </div>
     )
@@ -454,18 +454,32 @@ function Part3({
     setIsModalOpen,
     isModalOpen,
     selectedProduct,
-    selectedQuality,
-    selectedPrice,
     onPriceChoice,
     onWarrantAddition,
-    onNextPage,
     onPreviousPage,
     onWarrantSelection,
-    onWarrantUpdate,
     handleSubmit
 }) {
 
     const { low, high, warrants } = selectedProduct;
+    const initialSelectedCards = player.round.get("warrants") || [];
+    const [selectedCards, setSelectedCards] = useState(Array(warrants.length).fill(false));
+
+    const isSelected = (index) => selectedCards[index];
+
+    const toggleSelection = (index) => {
+        setSelectedCards((prevSelected) => {
+            const newSelected = [...prevSelected];
+            newSelected[index] = !newSelected[index];
+            return newSelected;
+        });
+    };
+
+    const selectedCardStyle = {
+        backgroundColor: "rgba(0, 0, 255, 0.2)",
+        borderRadius: "6px",
+        padding: "10px",
+    }
 
     return (
         <div className="flex flex-col gap-2 -top-6 justify-center border-3 border-indigo-800 p-6 rounded-lg h-full shadow-md relative p-10">
@@ -481,22 +495,29 @@ function Part3({
                 </div>
             </div>
 
-            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Warrant" children={
+            <Modal isOpen={isModalOpen} 
+                   onClose={() => {
+                   setIsModalOpen(false);
+                   setSelectedCards(initialSelectedCards.map((_, index) => index));
+                   }} 
+                    title="Warrant" children={
                 <>
                     {Array.isArray(warrants) && warrants.length > 0 && (
                         <div className="flex justify-center space-x-4">
                             {warrants.map((warrant, index) => {
                                 return (
                                     <div
-                                        className="flex flex-col items-center cursor-pointer select:border-2 border-black"
-                                        key={index}
-                                        onClick={(e) => {
-                                            onWarrantSelection(e, warrant.price, warrant.description);
-                                        }}
-                                    >
-                                        <img src={warrant.icon} alt="icon" className="mb-2" />
-                                        <h1 className="font-bold">{warrant.description}</h1>
-                                        <h1 className="font-semibold">${warrant.price}</h1>
+                                            style={isSelected(index) ? selectedCardStyle : {}}
+                                            className="flex flex-col items-center cursor-pointer select:border-2 border-black"
+                                            key={index}
+                                            onClick={(e) => {
+                                                toggleSelection(index);
+                                                onWarrantSelection(e, warrant.price, warrant.description);
+                                            }}
+                                        >
+                                        <img src={warrant.icon} alt="icon" className="mb-2 max-w-full h-auto rounded-lg" />
+                                        <h1 className="font-bold text-center mb-4">{warrant.description}</h1>
+                                        <h1 className="font-semibold text-xl text-center"><span style={{ color: "green" }}>${warrant.price}</span></h1>
                                     </div>
                                 );
                             })}
